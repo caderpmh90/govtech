@@ -1,6 +1,8 @@
 package com.cader.govtech.selection.controllers;
 
-import com.cader.govtech.InitiateSessionDto;
+import com.cader.govtech.DTO.InitiateSessionDto;
+import com.cader.govtech.DTO.ValidateSessionReqDto;
+import com.cader.govtech.DTO.ValidateSessionResDto;
 import com.cader.govtech.selection.services.ManageSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,9 +26,16 @@ public class SelectionRestController {
         return new ResponseEntity<>(out, HttpStatus.OK) ;
     }
 
+    @PostMapping("/validateSession")
+    public ResponseEntity<ValidateSessionResDto> validateSession(@RequestBody ValidateSessionReqDto data) {
+        boolean isValid =  sessionService.validateSession(data.getSessionId());
+        ValidateSessionResDto out = new ValidateSessionResDto(isValid);
+        return isValid? new ResponseEntity<>(out, HttpStatus.OK): new ResponseEntity<>(out, HttpStatus.BAD_REQUEST);
+    }
+
     @DeleteMapping("/removeSession/{sessionId}")
-    public String removeSession(@PathVariable String sessionId) {
+    public ResponseEntity<String> removeSession(@PathVariable String sessionId) {
         boolean removed = sessionService.removeSession(sessionId);
-        return removed ? "Session removed successfully" : "Session not found";
+        return removed ?new ResponseEntity<>("Session removed successfully", HttpStatus.OK)  :new ResponseEntity<>( "Session not found", HttpStatus.NOT_FOUND) ;
     }
 }

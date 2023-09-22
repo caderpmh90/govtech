@@ -1,4 +1,4 @@
-package com.cader.govtech;
+package com.cader.govtech.DTO;
 
 import lombok.Data;
 
