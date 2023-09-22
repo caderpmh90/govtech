@@ -1,11 +1,11 @@
 package com.cader.govtech.selection.controllers;
 
+import com.cader.govtech.InitiateSessionDto;
 import com.cader.govtech.selection.services.ManageSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -18,7 +18,15 @@ public class SelectionRestController {
     }
 
     @PostMapping("/initiateSession")
-    public String initiateSession(@RequestBody String name) {
-        return sessionService.createSession();
+    public ResponseEntity<InitiateSessionDto> initiateSession(@RequestBody String name) {
+        InitiateSessionDto out = new InitiateSessionDto();
+        out.setSessionId(sessionService.createSession());
+        return new ResponseEntity<>(out, HttpStatus.OK) ;
+    }
+
+    @DeleteMapping("/removeSession/{sessionId}")
+    public String removeSession(@PathVariable String sessionId) {
+        boolean removed = sessionService.removeSession(sessionId);
+        return removed ? "Session removed successfully" : "Session not found";
     }
 }
